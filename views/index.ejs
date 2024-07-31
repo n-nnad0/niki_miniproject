@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StyleIt!</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    /* Additional CSS for border and image */
+    .mannequin-container {
+      position: relative;
+      border: 3px solid #000;
+      padding: 10px;
+      margin-top: 20px; /* Adjust margin as needed */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 700px; /* Increased height */
+      width: 500px;  /* Increased width */
+      margin-left: auto; /* Center the container */
+      margin-right: auto; /* Center the container */
+    }
+    .mannequin-img {
+      max-width: 80%; /* Adjust width to make it smaller */
+      height: auto;
+    }
+    .overlay-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none; /* Initially hidden */
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">StyleIt!</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/outfits">Outfits!</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <div class="container mt-4">
+    <div class="row">
+      <!-- Left Section for Catalogue -->
+      <div class="col-lg-6">
+        <h2>All Catalogues</h2>
+        <!-- Brand selection dropdown -->
+        <div class="mb-3">
+          <label for="brandSelect" class="form-label">Select Catalogue:</label>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="brandSelect" data-bs-toggle="dropdown" aria-expanded="false">
+              Select
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="brandSelect">
+              <li><a class="dropdown-item" href="/">All</a></li>
+              <li><a class="dropdown-item" href="/zaraCatalogue">Zara</a></li>
+              <li><a class="dropdown-item" href="/uniqloCatalogue">Uniqlo</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Cards for clothing items -->
+        <div id="clothingItems" class="row row-cols-1 row-cols-md-2 g-4">
+          <% if (items && items.length > 0) { %>
+            <% items.forEach((item, index) => { %>
+              <div class="col clothing-item">
+                <div class="card" style="width: 18rem;">
+                  <img src="/images/<%= item.thumbnailImage %>" class="card-img-top" alt="<%= item.itemName %>">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= item.itemName %></h5>
+                    <p class="card-text">Price: <%= item.itemPrice %></p>
+                    <button class="btn btn-primary" onclick="selectItem('<%= item.fullImage %>', '<%= index %>')">Select</button><br><br>
+                    <p id="selectedText<%= index %>" style="display:none;">Selected</p>
+                    <button class="btn btn-danger" onclick="removeItem('<%= index %>')" style="display:none;">Remove</button>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div class="col-12">
+              <p>No items found.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Save Outfit Button -->
+        <% if (items && items.length > 0) { %>
+          <div class="mt-3">
+            <a href="/addOutfit" class="btn btn-success">Add Outfit</a>
+          </div>
+        <% } %>
+
+      </div>
+
+      <!-- Right Section for Mannequin Image -->
+      <div class="col-lg-6 d-flex justify-content-end">
+        <div class="mannequin-container">
+          <img src="/images/mannequin.png" alt="Mannequin Image" class="mannequin-img">
+          <img id="overlayImage" class="overlay-img" alt="Selected Item">
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- Script Section for JavaScript -->
+    <script>
+      // Function to select an item
+      function selectItem(imageUrl, index) {
+        // Display selected text
+        document.getElementById(`selectedText${index}`).style.display = 'block';
+  
+        // Display remove button
+        document.querySelector(`#clothingItems .clothing-item:nth-child(${parseInt(index) + 1}) .btn-danger`).style.display = 'inline-block';
+  
+        // Show selected item on mannequin
+        document.getElementById('overlayImage').src = `/images/${imageUrl}`;
+        document.getElementById('overlayImage').style.display = 'block';
+      }
+  
+      // Function to remove an item
+      function removeItem(index) {
+        // Hide selected text
+        document.getElementById(`selectedText${index}`).style.display = 'none';
+  
+        // Hide remove button
+        document.querySelector(`#clothingItems .clothing-item:nth-child(${parseInt(index) + 1}) .btn-danger`).style.display = 'none';
+  
+        // Hide selected item on mannequin
+        document.getElementById('overlayImage').style.display = 'none';
+      }
+    </script>
+  
+  </body>
+  </html>
+  
